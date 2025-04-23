@@ -17,9 +17,8 @@ func NewResourceRepo(db *sql.DB) *ResourceRepo {
 }
 
 func (r *ResourceRepo) Create(ctx context.Context, res *models.Resource) (*models.Resource, error) {
-	query := `INSERT INTO resources (id,collection_id,type,title,content,metadata) VALUES ($1,$2,$3,$4,$5,$6)`
-	if _, err := r.db.ExecContext(ctx, query,
-		res.ID, res.CollectionID, res.Type, res.Title, res.Content, maybeNull(res.Metadata)); err != nil {
+	query := `INSERT INTO resources (collection_id,type,title,content,metadata) VALUES ($1,$2,$3,$4,$5)`
+	if _, err := r.db.ExecContext(ctx, query, res.CollectionID, res.Type, res.Title, res.Content, maybeNull(res.Metadata)); err != nil {
 		return nil, err
 	}
 	return res, nil

@@ -2,17 +2,18 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/google/uuid"
+	"github.com/oklog/ulid/v2"
 	"time"
 )
 
 type Resource struct {
-	ID           uuid.UUID
-	CollectionID *uuid.UUID
+	ID           ulid.ULID
+	CollectionID *ulid.ULID
 	Type         string // "note" | "flashcard" | ...
 	Title        string
 	Content      json.RawMessage
 	Metadata     json.RawMessage
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	DeletedAt    time.Time
 }

@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/oklog/ulid/v2"
 	"learn_verse/internal/service"
 	"net/http"
 )
@@ -18,7 +18,7 @@ type resourceHandler struct {
 
 func (h *resourceHandler) Create(c *gin.Context) {
 	var in struct {
-		CollectionID *uuid.UUID      `json:"collection_id"`
+		CollectionID *ulid.ULID      `json:"collection_id"`
 		Type         string          `json:"type" binding:"required"`
 		Title        string          `json:"title" binding:"required"`
 		Content      json.RawMessage `json:"content" binding:"required"`

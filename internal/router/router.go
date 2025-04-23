@@ -22,7 +22,9 @@ func Setup(r *gin.Engine, db *sql.DB) {
 	resH := handler.NewResourceHandler(resSvc)
 
 	// Routes
-	grp := r.Group("/api")
-	grp.POST("/collections", collH.Create)
-	grp.POST("/resources", resH.Create)
+	api := r.Group("/api")
+	api.POST("/collections", collH.Create)
+	api.GET("/collections", collH.List)
+	api.GET("/collections/:id", collH.Get)
+	api.POST("/resources", resH.Create)
 }

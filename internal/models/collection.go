@@ -1,13 +1,15 @@
 package models
 
 import (
-	"github.com/google/uuid"
+	"github.com/oklog/ulid/v2"
 	"time"
 )
 
 type ResourceCollection struct {
-	ID          uuid.UUID
+	ID          ulid.ULID
 	Name        string
 	Description *string
 	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   time.Time
 }

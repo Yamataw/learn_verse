@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	"learn_verse/internal/db"
 	"learn_verse/internal/router"
 	"log"
