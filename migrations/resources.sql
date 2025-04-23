@@ -10,8 +10,8 @@ CREATE TABLE resource_collections (
                                       name        TEXT NOT NULL,
                                       description TEXT,
                                       created_at  TIMESTAMPTZ DEFAULT now(),
-                                      updated_at    TIMESTAMPTZ DEFAULT now()
-
+                                      updated_at    TIMESTAMPTZ DEFAULT now(),
+                                      deleted_at    TIMESTAMPTZ DEFAULT null    
 );
 CREATE TABLE resources (
                            id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -21,6 +21,8 @@ CREATE TABLE resources (
                            content       JSONB NOT NULL,
                            metadata      JSONB,
                            created_at    TIMESTAMPTZ DEFAULT now(),
-                           updated_at    TIMESTAMPTZ DEFAULT now()
+                           updated_at    TIMESTAMPTZ DEFAULT now(),
+                           deleted_at    TIMESTAMPTZ DEFAULT null
+
 );
 
