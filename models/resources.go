@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// Ressource unique
 type Resource struct {
 	ID           uuid.UUID
 	CollectionID *uuid.UUID
