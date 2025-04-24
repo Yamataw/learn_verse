@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Learn Verse API
+  version: "1.0.0"
+  description: API pour gérer des collections de ressources et leurs ressources associées.
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /collections:
+    get:
+      summary: Liste toutes les collections de ressources
+      responses:
+        '200':
+          description: Liste des collections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceCollection'
+    post:
+      summary: Crée une nouvelle collection de ressources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewResourceCollection'
+      responses:
+        '201':
+          description: Collection créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+
+  /collections/{id}:
+    get:
+      summary: Récupère une collection par son ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Détails de la collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+        '404':
+          description: Collection non trouvée
+
+  /resources:
+    post:
+      summary: Crée une nouvelle ressource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewResource'
+      responses:
+        '201':
+          description: Ressource créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+
+components:
+  schemas:
+    ResourceCollection:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+
+    NewResourceCollection:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+      required:
+        - name
+
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        collection_id:
+          type: string
+          format: uuid
+          nullable: true
+        type:
+          type: string
+          enum:
+            - note
+            - flashcard
+            - quiz
+            - file
+        title:
+          type: string
+        content:
+          type: object
+        metadata:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - title
+        - content
+        - created_at
+        - updated_at
+
+    NewResource:
+      type: object
+      properties:
+        collection_id:
+          type: string
+          format: uuid
+          nullable: true
+        type:
+          type: string
+          enum:
+            - note
+            - flashcard
+            - quiz
+            - file
+        title:
+          type: string
+        content:
+          type: object
+        metadata:
+          type: object
+          nullable: true
+      required:
+        - type
+        - title
+        - content
+
+
+
