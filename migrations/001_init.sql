@@ -21,6 +21,7 @@ CREATE TABLE resources (
                            content       JSONB NOT NULL,
                            metadata      JSONB,
                            created_at    TIMESTAMPTZ DEFAULT now(),
+                           attachment    BYTEA,
                            updated_at    TIMESTAMPTZ DEFAULT now(),
                            deleted_at    TIMESTAMPTZ DEFAULT null
 
