@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
+	"learn_verse/internal/models"
 	"learn_verse/internal/service"
 	"net/http"
 )
@@ -16,15 +17,12 @@ type collectionHandler struct {
 }
 
 func (h *collectionHandler) Create(c *gin.Context) {
-	var in struct {
-		Name        string  `json:"name"`
-		Description *string `json:"description"`
-	}
+	in := models.ResourceCollection{}
 	if err := c.ShouldBindJSON(&in); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	coll, err := h.svc.Create(c.Request.Context(), in.Name, in.Description)
+	coll, err := h.svc.Create(c.Request.Context(), in)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
