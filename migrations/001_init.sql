@@ -27,6 +27,8 @@ CREATE TABLE resources (
 );
 
 CREATE INDEX IF NOT EXISTS res_collection_idx ON resources(collection_id);
-CREATE INDEX  IF NOT EXISTS res_collection_created_at_idx ON resource_collections(created_at);
-CREATE INDEX  IF NOT EXISTS res_created_at_idx ON resources(created_at)
-
+CREATE INDEX IF NOT EXISTS res_collection_created_at_idx ON resource_collections(created_at);
+CREATE INDEX IF NOT EXISTS res_collection_active_at_idx ON resource_collections(id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS res_created_at_idx ON resources(created_at);
+CREATE INDEX IF NOT EXISTS res_active_at_idx ON resources(id) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS res_collection_created ON resources (collection_id, deleted_at, created_at DESC);
