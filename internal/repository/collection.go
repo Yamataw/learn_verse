@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/oklog/ulid/v2"
 	"learn_verse/internal/models"
 )
 
@@ -14,7 +13,7 @@ type CollectionRepo struct {
 }
 
 // Assure que CollectionRepo implémente l'interface générique
-var _ Repository[models.ResourceCollection, ulid.ULID] = (*CollectionRepo)(nil)
+var _ Repository[models.ResourceCollection, models.ULID] = (*CollectionRepo)(nil)
 
 // NewCollectionRepo crée une nouvelle instance de CollectionRepo
 func NewCollectionRepo(db *sql.DB) *CollectionRepo {
@@ -38,7 +37,7 @@ func (r *CollectionRepo) Create(ctx context.Context, entity models.ResourceColle
 }
 
 // GetByID récupère une collection par son ULID
-func (r *CollectionRepo) GetByID(ctx context.Context, id ulid.ULID) (models.ResourceCollection, error) {
+func (r *CollectionRepo) GetByID(ctx context.Context, id models.ULID) (models.ResourceCollection, error) {
 	var coll models.ResourceCollection
 	query := `
 	SELECT id, name, description, created_at, updated_at
@@ -84,6 +83,7 @@ func (r *CollectionRepo) List(ctx context.Context) ([]models.ResourceCollection,
 		}
 		out = append(out, coll)
 	}
+
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func (r *CollectionRepo) Update(ctx context.Context, entity models.ResourceColle
 }
 
 // Delete marque une collection comme supprimée (soft delete)
-func (r *CollectionRepo) Delete(ctx context.Context, id ulid.ULID) error {
+func (r *CollectionRepo) Delete(ctx context.Context, id models.ULID) error {
 	query := `
 	UPDATE resource_collections
 	SET deleted_at = now()
@@ -128,7 +128,7 @@ func (r *CollectionRepo) Delete(ctx context.Context, id ulid.ULID) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("collection not found or already deleted: %s", id.String())
+		return fmt.Errorf("collection not found or already deleted: %s", id)
 	}
 	return nil
 }

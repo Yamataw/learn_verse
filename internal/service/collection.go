@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/oklog/ulid/v2"
 	"learn_verse/internal/models"
 	"learn_verse/internal/repository"
 )
@@ -22,7 +21,7 @@ func (s *CollectionService) Create(ctx context.Context, collection models.Resour
 }
 
 // Get récupère une collection par ID
-func (s *CollectionService) Get(ctx context.Context, id ulid.ULID) (models.ResourceCollection, error) {
+func (s *CollectionService) Get(ctx context.Context, id models.ULID) (models.ResourceCollection, error) {
 	return s.repo.GetByID(ctx, id)
 }
 

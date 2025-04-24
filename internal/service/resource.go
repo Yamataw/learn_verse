@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"github.com/oklog/ulid/v2"
 	"learn_verse/internal/models"
 	"learn_verse/internal/repository"
 )
@@ -16,7 +15,7 @@ func NewResourceService(repo *repository.ResourceRepo) *ResourceService {
 	return &ResourceService{repo: repo}
 }
 
-func (s *ResourceService) Create(ctx context.Context, collID *ulid.ULID, t, title string, content, meta []byte) (*models.Resource, error) {
+func (s *ResourceService) Create(ctx context.Context, collID *models.ULID, t, title string, content, meta []byte) (*models.Resource, error) {
 	res := &models.Resource{
 		CollectionID: collID,
 		Type:         t,

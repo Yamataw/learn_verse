@@ -36,7 +36,7 @@ func (h *collectionHandler) Get(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID invalide"})
 		return
 	}
-	coll, err := h.svc.Get(c.Request.Context(), id)
+	coll, err := h.svc.Get(c.Request.Context(), models.ULID(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Collection non trouvée"})
 		return

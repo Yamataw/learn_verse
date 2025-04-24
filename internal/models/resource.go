@@ -2,13 +2,12 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/oklog/ulid/v2"
 	"time"
 )
 
 type Resource struct {
-	ID           ulid.ULID
-	CollectionID *ulid.ULID
+	ID           ULID
+	CollectionID *ULID
 	Type         string // "note" | "flashcard" | ...
 	Title        string
 	Content      json.RawMessage
