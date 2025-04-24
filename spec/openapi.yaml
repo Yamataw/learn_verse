@@ -44,7 +44,7 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
+            format: ulid
       responses:
         '200':
           description: Détails de la collection
@@ -79,7 +79,7 @@ components:
       properties:
         id:
           type: string
-          format: uuid
+          format: ulid
         name:
           type: string
         description:
@@ -113,10 +113,10 @@ components:
       properties:
         id:
           type: string
-          format: uuid
+          format: ulid
         collection_id:
           type: string
-          format: uuid
+          format: ulid
           nullable: true
         type:
           type: string
@@ -151,7 +151,7 @@ components:
       properties:
         collection_id:
           type: string
-          format: uuid
+          format: ulid
           nullable: true
         type:
           type: string
