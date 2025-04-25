@@ -55,6 +55,46 @@ paths:
         '404':
           description: Collection non trouvée
 
+    put:
+      summary: Met à jour une collection existante
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: ulid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewResourceCollection'
+      responses:
+        '200':
+          description: Collection mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+        '404':
+          description: Collection non trouvée
+
+    delete:
+      summary: Supprime une collection par son ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: ulid
+      responses:
+        '204':
+          description: Collection supprimée (aucun contenu)
+        '404':
+          description: Collection non trouvée
+
   /resources:
     post:
       summary: Crée une nouvelle ressource
@@ -171,6 +211,3 @@ components:
         - type
         - title
         - content
-
-
-

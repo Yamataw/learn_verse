@@ -29,3 +29,11 @@ func (s *CollectionService) Get(ctx context.Context, id models.ULID) (models.Res
 func (s *CollectionService) List(ctx context.Context) ([]models.ResourceCollection, error) {
 	return s.repo.List(ctx)
 }
+
+func (s *CollectionService) Update(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error) {
+	return s.repo.Update(ctx, collection)
+}
+
+func (s *CollectionService) Delete(ctx context.Context, id models.ULID) error {
+	return s.repo.Delete(ctx, id)
+}
