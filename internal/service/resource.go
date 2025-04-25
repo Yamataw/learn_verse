@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"learn_verse/internal/models"
 	"learn_verse/internal/repository"
 )
@@ -13,7 +12,7 @@ type ResourceService struct {
 }
 
 type ResourceServiceInterface interface {
-	Create(ctx context.Context, collectionID *models.ULID, typ string, title string, content, metadata json.RawMessage) (models.Resource, error)
+	Create(ctx context.Context, collID *models.ULID, t string, title string, content []byte, meta []byte) (*models.Resource, error)
 }
 
 func NewResourceService(repo *repository.ResourceRepo) *ResourceService {

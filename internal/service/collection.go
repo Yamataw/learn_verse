@@ -15,6 +15,8 @@ type CollectionServiceInterface interface {
 	Create(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error)
 	Get(ctx context.Context, id models.ULID) (models.ResourceCollection, error)
 	List(ctx context.Context) ([]models.ResourceCollection, error)
+	Update(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error)
+	Delete(ctx context.Context, id models.ULID) error
 }
 
 func NewCollectionService(repo *repository.CollectionRepo) *CollectionService {

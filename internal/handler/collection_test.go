@@ -21,6 +21,16 @@ type MockCollectionService struct {
 	mock.Mock
 }
 
+func (m *MockCollectionService) Update(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error) {
+	args := m.Called(ctx, collection)
+	return args.Get(0).(models.ResourceCollection), args.Error(1)
+}
+
+func (m *MockCollectionService) Delete(ctx context.Context, id models.ULID) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+
 func (m *MockCollectionService) Create(ctx context.Context, coll models.ResourceCollection) (models.ResourceCollection, error) {
 	args := m.Called(ctx, coll)
 	return args.Get(0).(models.ResourceCollection), args.Error(1)
