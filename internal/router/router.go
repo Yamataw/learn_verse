@@ -26,5 +26,8 @@ func Setup(r *gin.Engine, db *sql.DB) {
 	api.POST("/collections", collH.Create)
 	api.GET("/collections", collH.List)
 	api.GET("/collections/:id", collH.Get)
+	api.DELETE("/collections/:id", collH.Delete)
+	api.PUT("/collections/:id", collH.Update)
 	api.POST("/resources", resH.Create)
+
 }
