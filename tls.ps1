@@ -1,0 +1,2 @@
+openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes -keyout server.key -out server.crt -subj "/C=FR/ST=IleEtVilaine/L=Rennes/O=learn_verse/CN=localhost"
+oapi-codegen.exe -package client .\spec\openapi.yaml Out-File -FilePath client/client.go -Encoding UTF8

@@ -7,9 +7,6 @@ import (
 )
 
 // CollectionService regroupe la logique métier
-type CollectionService struct {
-	repo *repository.CollectionRepo
-}
 
 type CollectionServiceInterface interface {
 	Create(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error)
@@ -19,29 +16,13 @@ type CollectionServiceInterface interface {
 	Delete(ctx context.Context, id models.ULID) error
 }
 
+type CollectionService struct {
+	*BaseService[models.ResourceCollection, models.ULID, *repository.CollectionRepo]
+}
+
+// NewCollectionService crée un service pour ResourceCollection
 func NewCollectionService(repo *repository.CollectionRepo) *CollectionService {
-	return &CollectionService{repo: repo}
-}
-
-func (s *CollectionService) Create(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error) {
-	// ici on pourrait valider, vérifier droits, etc.
-	return s.repo.Create(ctx, collection)
-}
-
-// Get récupère une collection par ID
-func (s *CollectionService) Get(ctx context.Context, id models.ULID) (models.ResourceCollection, error) {
-	return s.repo.GetByID(ctx, id)
-}
-
-// List renvoie toutes les collections
-func (s *CollectionService) List(ctx context.Context) ([]models.ResourceCollection, error) {
-	return s.repo.List(ctx)
-}
-
-func (s *CollectionService) Update(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error) {
-	return s.repo.Update(ctx, collection)
-}
-
-func (s *CollectionService) Delete(ctx context.Context, id models.ULID) error {
-	return s.repo.Delete(ctx, id)
+	return &CollectionService{
+		BaseService: &BaseService[models.ResourceCollection, models.ULID, *repository.CollectionRepo]{Repo: repo},
+	}
 }

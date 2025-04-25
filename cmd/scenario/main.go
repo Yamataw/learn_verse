@@ -2,102 +2,141 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"crypto/tls"
+	"crypto/x509"
 	"log"
+	"net/http"
+	"os"
 	"time"
 
 	"learn_verse/client"
 )
 
 func main() {
-	// Base URL de votre API OpenAPI 3.0.3
-	const serverURL = "http://localhost:8080/api"
+	// Base URL de votre API en HTTPS
+	const serverURL = "https://localhost:8443/api"
+
+	// --- 1) Charger et configurer la CA pour TLS ---
+	caCert, err := os.ReadFile("server.crt")
+	if err != nil {
+		log.Fatalf("Impossible de lire le certificat CA : %v", err)
+	}
+	caPool := x509.NewCertPool()
+	if !caPool.AppendCertsFromPEM(caCert) {
+		log.Fatal("Échec de l'ajout du certificat CA au pool")
+	}
+
+	// --- 2) Configuration TLS pour accepter les certificats sans SAN (fallback sur CN) ---
+	tlsConfig := &tls.Config{
+		// Utilise notre pool
+		RootCAs: caPool,
+		// Désactive la vérification standard (qui exige un SAN)
+		InsecureSkipVerify: true,
+		// Vérification manuelle : signature + chaîne, sans vérification de nom d'hôte
+		VerifyPeerCertificate: func(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
+			// Parse les certificats reçus
+			certs := make([]*x509.Certificate, len(rawCerts))
+			for i, asn1Data := range rawCerts {
+				cert, err := x509.ParseCertificate(asn1Data)
+				if err != nil {
+					return err
+				}
+				certs[i] = cert
+			}
+			// Vérifie la chaîne contre notre pool de CA
+			opts := x509.VerifyOptions{Roots: caPool}
+			_, err := certs[0].Verify(opts)
+			return err
+		},
+	}
+
+	transport := &http.Transport{TLSClientConfig: tlsConfig}
+	httpClient := &http.Client{
+		Transport: transport,
+		Timeout:   30 * time.Second,
+	}
 
 	ctx := context.Background()
 
-	// 0) Instanciation du client typé avec réponses
-	cli, err := client.NewClientWithResponses(serverURL)
+	// --- 3) Instanciation du client typé avec HTTP client TLS ---
+	cli, err := client.NewClientWithResponses(serverURL, client.WithHTTPClient(httpClient))
 	if err != nil {
 		log.Fatalf("Erreur NewClientWithResponses: %v", err)
 	}
 
 	// --------------------------------------------------
-	// 1) CREATE collection
+	// 4) CREATE collection
 	// --------------------------------------------------
 	newColl := client.PostCollectionsJSONRequestBody{
 		Name:        "MaCollectionGo",
-		Description: ptrString("Créée via Go et oapi-codegen"),
+		Description: ptrString("Créée via Go et oapi-codegen (TLS)"),
 	}
 	createResp, err := cli.PostCollectionsWithResponse(ctx, newColl)
 	if err != nil {
 		log.Fatalf("PostCollectionsWithResponse failed: %v", err)
 	}
-	if createResp.StatusCode() != 201 {
+	if createResp.StatusCode() != http.StatusCreated {
 		log.Fatalf("Échec création (status %d)", createResp.StatusCode())
 	}
 	created := createResp.JSON201
-	fmt.Printf("✅ Créée : ID=%s, Name=%s, CreatedAt=%s\n",
-		created.Id, created.Name, formatTimePtr(created.CreatedAt))
+	log.Printf("✅ Créée : ID=%s, Name=%s, CreatedAt=%s", created.Id, created.Name, formatTimePtr(created.CreatedAt))
 
 	// --------------------------------------------------
-	// 2) LIST all collections
+	// 5) LIST all collections
 	// --------------------------------------------------
 	listResp, err := cli.GetCollectionsWithResponse(ctx)
 	if err != nil {
 		log.Fatalf("GetCollectionsWithResponse failed: %v", err)
 	}
-	if listResp.StatusCode() != 200 {
+	if listResp.StatusCode() != http.StatusOK {
 		log.Fatalf("Échec listing (status %d)", listResp.StatusCode())
 	}
-	fmt.Println("📋 Liste des collections :")
+	log.Println("📋 Liste des collections :")
 	for _, c := range *listResp.JSON200 {
-		fmt.Printf(" - %s : %s (updated at %s)\n",
-			c.Id, c.Name, formatTimePtr(c.UpdatedAt))
+		log.Printf(" - %s : %s (updated at %s)", c.Id, c.Name, formatTimePtr(c.UpdatedAt))
 	}
 
 	// --------------------------------------------------
-	// 3) GET collection by ID
+	// 6) GET collection by ID
 	// --------------------------------------------------
 	getResp, err := cli.GetCollectionsIdWithResponse(ctx, created.Id)
 	if err != nil {
 		log.Fatalf("GetCollectionsIdWithResponse failed: %v", err)
 	}
-	if getResp.StatusCode() != 200 {
+	if getResp.StatusCode() != http.StatusOK {
 		log.Fatalf("Échec GET by ID (status %d)", getResp.StatusCode())
 	}
 	fetched := getResp.JSON200
-	fmt.Printf("🔍 Récupérée : ID=%s, Name=%s, Description=%s\n",
-		fetched.Id, fetched.Name, ptrVal(fetched.Description))
+	log.Printf("🔍 Récupérée : ID=%s, Name=%s, Description=%s", fetched.Id, fetched.Name, ptrVal(fetched.Description))
 
 	// --------------------------------------------------
-	// 4) UPDATE collection (PUT)
+	// 7) UPDATE collection (PUT)
 	// --------------------------------------------------
 	updateBody := client.PutCollectionsIdJSONRequestBody{
 		Name:        "MaCollectionGo_Modifiée",
-		Description: ptrString("Description mise à jour"),
+		Description: ptrString("Description mise à jour (TLS)"),
 	}
 	putResp, err := cli.PutCollectionsIdWithResponse(ctx, created.Id, updateBody)
 	if err != nil {
 		log.Fatalf("PutCollectionsIdWithResponse failed: %v", err)
 	}
-	if putResp.StatusCode() != 200 {
+	if putResp.StatusCode() != http.StatusOK {
 		log.Fatalf("Échec update (status %d)", putResp.StatusCode())
 	}
 	updated := putResp.JSON200
-	fmt.Printf("✏️  Mise à jour : Name=%s, UpdatedAt=%s\n",
-		updated.Name, formatTimePtr(updated.UpdatedAt))
+	log.Printf("✏️  Mise à jour : Name=%s, UpdatedAt=%s", updated.Name, formatTimePtr(updated.UpdatedAt))
 
 	// --------------------------------------------------
-	// 5) DELETE collection
+	// 8) DELETE collection
 	// --------------------------------------------------
 	delResp, err := cli.DeleteCollectionsIdWithResponse(ctx, created.Id)
 	if err != nil {
 		log.Fatalf("DeleteCollectionsIdWithResponse failed: %v", err)
 	}
-	if delResp.StatusCode() != 204 {
+	if delResp.StatusCode() != http.StatusNoContent {
 		log.Fatalf("Échec suppression (status %d)", delResp.StatusCode())
 	}
-	fmt.Println("🗑️  Supprimée avec succès.")
+	log.Println("🗑️  Supprimée avec succès.")
 }
 
 // ptrString retourne un pointeur vers s
@@ -113,7 +152,7 @@ func ptrVal(s *string) string {
 	return *s
 }
 
-// formatTimePtr gère les *time.Time nullable
+// formatTimePtr formate *time.Time
 func formatTimePtr(t time.Time) string {
 	return t.Format(time.RFC3339)
 }

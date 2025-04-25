@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	serverURL := "http://localhost:8080/api"
+	serverURL := "https://localhost:8443/api"
 
 	// Crée un client simple (sans helper pour les réponses typées)
 	cli, err := client.NewClient(serverURL)
