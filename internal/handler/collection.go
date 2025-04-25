@@ -8,12 +8,16 @@ import (
 	"net/http"
 )
 
-func NewCollectionHandler(svc *service.CollectionService) *collectionHandler {
+//func NewCollectionHandler(svc *service.CollectionService) *collectionHandler { return &collectionHandler{svc: svc} }
+
+//type collectionHandler struct { svc *service.CollectionService }
+
+func NewCollectionHandler(svc service.CollectionServiceInterface) *collectionHandler {
 	return &collectionHandler{svc: svc}
 }
 
 type collectionHandler struct {
-	svc *service.CollectionService
+	svc service.CollectionServiceInterface
 }
 
 func (h *collectionHandler) Create(c *gin.Context) {

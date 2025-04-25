@@ -8,12 +8,16 @@ import (
 	"net/http"
 )
 
-func NewResourceHandler(svc *service.ResourceService) *resourceHandler {
+// func NewResourceHandler(svc *service.ResourceService) *resourceHandler { return &resourceHandler{svc: svc} }
+
+//type resourceHandler struct { svc *service.ResourceService }
+
+func NewResourceHandler(svc service.ResourceServiceInterface) *resourceHandler {
 	return &resourceHandler{svc: svc}
 }
 
 type resourceHandler struct {
-	svc *service.ResourceService
+	svc service.ResourceServiceInterface
 }
 
 func (h *resourceHandler) Create(c *gin.Context) {

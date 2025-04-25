@@ -11,6 +11,12 @@ type CollectionService struct {
 	repo *repository.CollectionRepo
 }
 
+type CollectionServiceInterface interface {
+	Create(ctx context.Context, collection models.ResourceCollection) (models.ResourceCollection, error)
+	Get(ctx context.Context, id models.ULID) (models.ResourceCollection, error)
+	List(ctx context.Context) ([]models.ResourceCollection, error)
+}
+
 func NewCollectionService(repo *repository.CollectionRepo) *CollectionService {
 	return &CollectionService{repo: repo}
 }
